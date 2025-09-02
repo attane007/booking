@@ -14,7 +14,18 @@ for ($i = 0; $i < count($sql_delreserve); $i++) {
 ?>
 <div class="row">
     <div class="col text-center">
-        <img src="assets/img/title.png" class="img_title" alt="">
+        <?php
+        $cw = function_exists('load_custom_website') ? load_custom_website() : [];
+        $cover_file = !empty($cw['cover']) ? $cw['cover'] : '';
+        // prefer datas/cover/<file> if exists
+        $cover_path = 'assets/img/title.png';
+        if ($cover_file && file_exists(__DIR__ . '/../datas/cover/' . $cover_file)) {
+            $cover_path = 'datas/cover/' . $cover_file;
+        } elseif (file_exists(__DIR__ . '/assets/img/title.png')) {
+            $cover_path = 'assets/img/title.png';
+        }
+        ?>
+        <img src="<?php echo htmlspecialchars($cover_path, ENT_QUOTES, 'UTF-8'); ?>" class="img_title" alt="">
     </div>
 </div>
 

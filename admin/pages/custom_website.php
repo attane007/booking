@@ -12,7 +12,14 @@ if (!defined('IS_ADMIN') || IS_ADMIN !== true) {
 $msg = '';
 $settingsFile = __DIR__ . '/../../settings/custom_website.json';
 $logoPath = __DIR__ . '/../../assets/img/custom_logo.png';
-$coverPath = __DIR__ . '/../../assets/img/title.png';
+$imgDir = __DIR__ . '/../../assets/img/';
+
+// default (legacy) cover filename
+$defaultCover = 'title.png';
+
+// new cover directory under booking/datas/cover
+$coverDir = __DIR__ . '/../../datas/cover/';
+
 
 // Load existing settings
 $settings = array('site_title' => '', 'logo' => '', 'cover' => '', 'map_heading' => '');
@@ -27,7 +34,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
   $site_title = isset($_POST['site_title']) ? $_POST['site_title'] : '';
   $map_heading = isset($_POST['map_heading']) ? $_POST['map_heading'] : '';
 
-  // Save logo if uploaded
+  // Save logo if uploaded (keeps legacy filename custom_logo.png)
+  $savedLogo = '';
   if (!empty($_FILES['logo']['tmp_name'])) {
     $tmp = $_FILES['logo']['tmp_name'];
     $finfo = finfo_open(FILEINFO_MIME_TYPE);
@@ -35,16 +43,20 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     finfo_close($finfo);
     $allowed = array('image/png','image/jpeg','image/gif');
     if (in_array($mime, $allowed)) {
-      if (!is_dir(dirname($logoPath))) @mkdir(dirname($logoPath), 0755, true);
-      if (!@move_uploaded_file($tmp, $logoPath)) {
+      if (!is_dir($imgDir)) @mkdir($imgDir, 0755, true);
+      $savedLogo = 'custom_logo.' . (strpos($mime, 'png') !== false ? 'png' : (strpos($mime,'jpeg')!==false ? 'jpg' : 'gif'));
+      $dest = $imgDir . $savedLogo;
+      if (!@move_uploaded_file($tmp, $dest)) {
         $msg = 'ไม่สามารถอัปโหลดรูปภาพได้';
+        $savedLogo = '';
       }
     } else {
       $msg = 'ไฟล์โลโก้ต้องเป็นภาพ (png/jpg/gif)';
     }
   }
 
-  // Save cover if uploaded (fixed filename title.png)
+  // Save cover if uploaded — store with unique timestamped filename and persist path
+  $savedCover = '';
   if (!empty($_FILES['cover']['tmp_name'])) {
     $tmpc = $_FILES['cover']['tmp_name'];
     $finfo = finfo_open(FILEINFO_MIME_TYPE);
@@ -52,9 +64,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     finfo_close($finfo);
     $allowedCover = array('image/png','image/jpeg','image/gif');
     if (in_array($mimec, $allowedCover)) {
-      if (!is_dir(dirname($coverPath))) @mkdir(dirname($coverPath), 0755, true);
-      if (!@move_uploaded_file($tmpc, $coverPath)) {
+      if (!is_dir($coverDir)) @mkdir($coverDir, 0755, true);
+      $ext = strpos($mimec, 'png') !== false ? 'png' : (strpos($mimec,'jpeg')!==false ? 'jpg' : 'gif');
+      // create filename with timestamp
+      $savedCover = 'cover_' . time() . '.' . $ext;
+      $destc = $coverDir . $savedCover;
+      if (!@move_uploaded_file($tmpc, $destc)) {
         $msg = 'ไม่สามารถอัปโหลดภาพปกได้';
+        $savedCover = '';
       }
     } else {
       $msg = 'ไฟล์ภาพปกต้องเป็นภาพ (png/jpg/gif)';
@@ -62,10 +79,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
   }
 
   // persist settings to JSON
+  // choose saved filenames if newly uploaded, else keep existing settings
   $payload = array(
     'site_title' => $site_title,
-    'logo' => file_exists($logoPath) ? basename($logoPath) : '',
-    'cover' => file_exists($coverPath) ? basename($coverPath) : '',
+    'logo' => $savedLogo ? $savedLogo : (!empty($settings['logo']) ? $settings['logo'] : ''),
+    'cover' => $savedCover ? $savedCover : (!empty($settings['cover']) ? $settings['cover'] : $defaultCover),
     'map_heading' => $map_heading
   );
   if (!is_dir(dirname($settingsFile))) @mkdir(dirname($settingsFile), 0755, true);
@@ -113,19 +131,20 @@ function e($s) { return htmlspecialchars($s, ENT_QUOTES, 'UTF-8'); }
       </div>
 
       <div class="mb-3">
-        <label class="form-label">ภาพปก (cover) - จะเก็บเป็น assets/img/title.png</label>
+        <label class="form-label">ภาพปก (cover) - อัปโหลดเพื่อใช้อ้างอิงบนหน้าสาธารณะ</label>
         <input type="file" name="cover" class="form-control" accept="image/*" />
-        <?php if (!empty($settings['cover']) && file_exists(__DIR__ . '/../../assets/img/' . $settings['cover'])): ?>
+        <?php
+          $showCover = '';
+          if (!empty($settings['cover']) && file_exists($coverDir . $settings['cover'])) {
+            $showCover = 'datas/cover/' . $settings['cover'];
+          } elseif (file_exists(__DIR__ . '/../../assets/img/' . $defaultCover)) {
+            $showCover = 'assets/img/' . $defaultCover;
+          }
+        ?>
+        <?php if ($showCover): ?>
           <div style="margin-top:8px">
-            <img src="../../assets/img/<?php echo e($settings['cover']); ?>" alt="cover" style="max-height:120px; width:auto;" />
+            <img src="../../<?php echo e($showCover); ?>" alt="cover" style="max-height:120px; width:auto;" />
           </div>
-        <?php else: ?>
-          <!-- show existing title.png if exists -->
-          <?php if (file_exists(__DIR__ . '/../../assets/img/title.png')): ?>
-            <div style="margin-top:8px">
-              <img src="../../assets/img/title.png" alt="cover" style="max-height:120px; width:auto;" />
-            </div>
-          <?php endif; ?>
         <?php endif; ?>
       </div>
 
