@@ -87,14 +87,27 @@
           <div class="container-xxl flex-grow-1 container-p-y">
             <!-- Admin quick links -->
             <div class="d-flex justify-content-end mb-3">
-              <a href="index.php?page=custom_website" class="btn-custom-website" title="แก้ไขเว็บไซต์">
-                <span class="icon" aria-hidden="true">
-                  <!-- simple paintbrush icon -->
-                  <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" width="20" height="20">
-                    <path d="M3 21v-3.75L14.06 6.19a2.5 2.5 0 0 1 3.54 0l.19.19a2.5 2.5 0 0 1 0 3.54L6.75 21H3z" fill="#fff" opacity=".95"/>
-                    <path d="M14.56 5.44l4 4" stroke="#fff" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/>
-                  </svg>
-                </span>
-                แก้ไขเว็บไซต์
-              </a>
+              <?php $current_page = isset($_GET['page']) ? $_GET['page'] : 'main'; ?>
+              <?php if ($current_page === 'custom_website'): ?>
+                <a href="index.php" class="btn-custom-website" data-role="admin-quicklink" title="กลับไปหน้า admin">
+                  <span class="icon" aria-hidden="true">
+                    <!-- left arrow icon -->
+                    <svg viewBox="0 0 24 24" width="20" height="20" xmlns="http://www.w3.org/2000/svg" fill="none">
+                      <path d="M15 6l-6 6 6 6" stroke="#fff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                  </span>
+                  กลับไปหน้า admin
+                </a>
+              <?php else: ?>
+                <a href="index.php?page=custom_website" class="btn-custom-website" data-role="admin-quicklink" title="แก้ไขเว็บไซต์">
+                  <span class="icon" aria-hidden="true">
+                    <!-- simple paintbrush icon -->
+                    <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" width="20" height="20">
+                      <path d="M3 21v-3.75L14.06 6.19a2.5 2.5 0 0 1 3.54 0l.19.19a2.5 2.5 0 0 1 0 3.54L6.75 21H3z" fill="#fff" opacity=".95"/>
+                      <path d="M14.56 5.44l4 4" stroke="#fff" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                  </span>
+                  แก้ไขเว็บไซต์
+                </a>
+              <?php endif; ?>
             </div>

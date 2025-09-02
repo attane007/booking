@@ -103,6 +103,18 @@ body.admin{
   box-shadow: 0 12px 30px rgba(79,70,229,0.18);
   transform: none;
 }
+
+/* Ensure text color does not change on hover/focus/active */
+.btn-custom-website[data-role="admin-quicklink"],
+.btn-custom-website[data-role="admin-quicklink"]:visited {
+  color: #fff;
+}
+.btn-custom-website[data-role="admin-quicklink"]:hover,
+.btn-custom-website[data-role="admin-quicklink"]:focus,
+.btn-custom-website[data-role="admin-quicklink"]:active {
+  color: #fff;
+  text-decoration: none;
+}
 .btn-custom-website .icon{ width:20px; height:20px; display:inline-block; }
 
 /* make it prominent on small screens */
