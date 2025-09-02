@@ -21,6 +21,8 @@ $defaultCover = 'title.png';
 $coverDir = __DIR__ . '/../../datas/cover/';
 // payment QR directory
 $qrDir = __DIR__ . '/../../datas/payment/';
+// e-card / checklist directory
+$ecardDir = __DIR__ . '/../../datas/e-card/';
 
 
 // Load existing settings
@@ -159,6 +161,28 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
       }
     }
 
+      // Save e-card checklist image if uploaded — store with timestamp and persist filename
+      $savedChecklist = '';
+      if (!empty($_FILES['checklist']['tmp_name'])) {
+        $tmpch = $_FILES['checklist']['tmp_name'];
+        $finfo = finfo_open(FILEINFO_MIME_TYPE);
+        $mimech = finfo_file($finfo, $tmpch);
+        finfo_close($finfo);
+        $allowedCh = array('image/png','image/jpeg','image/gif');
+        if (in_array($mimech, $allowedCh)) {
+          if (!is_dir($ecardDir)) @mkdir($ecardDir, 0755, true);
+          $extch = strpos($mimech, 'png') !== false ? 'png' : (strpos($mimech,'jpeg')!==false ? 'jpg' : 'gif');
+          $savedChecklist = 'checklist_' . time() . '.' . $extch;
+          $destch = $ecardDir . $savedChecklist;
+          if (!@move_uploaded_file($tmpch, $destch)) {
+            $msg = 'ไม่สามารถอัปโหลดรูป Checklist ได้';
+            $savedChecklist = '';
+          }
+        } else {
+          $msg = 'ไฟล์ Checklist ต้องเป็นภาพ (png/jpg/gif)';
+        }
+      }
+
   // persist settings to JSON
   // choose saved filenames if newly uploaded, else keep existing settings
   $payload = array(
@@ -166,6 +190,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     'logo' => $savedLogo ? $savedLogo : (!empty($settings['logo']) ? $settings['logo'] : ''),
     'cover' => $savedCover ? $savedCover : (!empty($settings['cover']) ? $settings['cover'] : $defaultCover),
     'qr' => $savedQR ? $savedQR : (!empty($settings['qr']) ? $settings['qr'] : ''),
+  'checklist' => $savedChecklist ? $savedChecklist : (!empty($settings['checklist']) ? $settings['checklist'] : ''),
     'map_heading' => $map_heading,
   'table_money' => $table_money,
   'all_tables' => $all_tables,
@@ -185,103 +210,149 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
   }
 }
 
-// helper escape for output
-function e($s) { return htmlspecialchars($s, ENT_QUOTES, 'UTF-8'); }
-
 ?>
 
-<div class="card">
-  <div class="card-header">
-    <h5>แก้ไขเว็บไซต์ (Custom Website)</h5>
-  </div>
-  <div class="card-body">
-    <?php if ($msg): ?>
-      <div class="alert alert-info"><?php echo e($msg); ?></div>
-    <?php endif; ?>
-
-    <form method="post" enctype="multipart/form-data">
-      <div class="mb-3">
-        <label class="form-label">Site title</label>
-        <input type="text" name="site_title" class="form-control" value="<?php echo e($settings['site_title']); ?>" />
-      </div>
-
-      <div class="mb-3">
-        <label class="form-label">ข้อความหัวผังโต๊ะ (Map heading)</label>
-        <input type="text" name="map_heading" class="form-control" value="<?php echo e(!empty($settings['map_heading']) ? $settings['map_heading'] : 'ผังโต๊ะ งาน 48ปี ราตรีม่วง-เหลือง'); ?>" />
-      </div>
-
-      <div class="mb-3">
-        <label class="form-label">Logo (png/jpg/gif)</label>
-        <input type="file" name="logo" class="form-control" accept="image/*" />
-        <?php if (!empty($settings['logo']) && file_exists(__DIR__ . '/../../assets/img/' . $settings['logo'])): ?>
-          <div style="margin-top:8px">
-            <img src="../../assets/img/<?php echo e($settings['logo']); ?>" alt="logo" style="max-height:80px;" />
+  <form method="post" enctype="multipart/form-data">
+      <!-- General settings -->
+      <div class="card mb-3">
+        <div class="card-header"><strong>General</strong></div>
+        <div class="card-body">
+          <div class="mb-3">
+            <label class="form-label">Site title</label>
+            <input type="text" name="site_title" class="form-control" value="<?php echo e($settings['site_title']); ?>" />
           </div>
-        <?php endif; ?>
-      </div>
 
-      <div class="mb-3">
-        <label class="form-label">ภาพปก (cover) - อัปโหลดเพื่อใช้อ้างอิงบนหน้าสาธารณะ</label>
-        <input type="file" name="cover" class="form-control" accept="image/*" />
-        <?php
-          $showCover = '';
-          if (!empty($settings['cover']) && file_exists($coverDir . $settings['cover'])) {
-            $showCover = 'datas/cover/' . $settings['cover'];
-          } elseif (file_exists(__DIR__ . '/../../assets/img/' . $defaultCover)) {
-            $showCover = 'assets/img/' . $defaultCover;
-          }
-        ?>
-        <?php if ($showCover): ?>
-          <div style="margin-top:8px">
-            <img src="../../<?php echo e($showCover); ?>" alt="cover" style="max-height:120px; width:auto;" />
+          <div class="mb-3">
+            <label class="form-label">ข้อความหัวผังโต๊ะ (Map heading)</label>
+            <input type="text" name="map_heading" class="form-control" value="<?php echo e(!empty($settings['map_heading']) ? $settings['map_heading'] : 'ผังโต๊ะ งาน 48ปี ราตรีม่วง-เหลือง'); ?>" />
           </div>
-        <?php endif; ?>
-      </div>
 
-      <div class="mb-3">
-        <label class="form-label">QR ชำระเงิน (png/jpg/gif) - อัปโหลดเพื่อเปลี่ยน</label>
-        <input type="file" name="qr" class="form-control" accept="image/*" />
-        <?php
-          $showQR = '';
-          if (!empty($settings['qr']) && file_exists($qrDir . $settings['qr'])) {
-            $showQR = 'datas/payment/' . $settings['qr'];
-          }
-        ?>
-        <?php if ($showQR): ?>
-          <div style="margin-top:8px">
-            <img src="../../<?php echo e($showQR); ?>" alt="qr" style="max-height:120px; width:auto;" />
+          <div class="mb-3">
+            <label class="form-label">Logo (png/jpg/gif)</label>
+            <input type="file" name="logo" class="form-control" accept="image/*" />
+            <?php if (!empty($settings['logo']) && file_exists(__DIR__ . '/../../assets/img/' . $settings['logo'])): ?>
+              <div style="margin-top:8px">
+                <img src="../../assets/img/<?php echo e($settings['logo']); ?>" alt="logo" style="max-height:80px;" />
+              </div>
+            <?php endif; ?>
           </div>
-        <?php endif; ?>
+
+          <div class="mb-3">
+            <label class="form-label">ภาพปก (cover) - อัปโหลดเพื่อใช้อ้างอิงบนหน้าสาธารณะ</label>
+            <input type="file" name="cover" class="form-control" accept="image/*" />
+            <?php
+              $showCover = '';
+              if (!empty($settings['cover']) && file_exists($coverDir . $settings['cover'])) {
+                $showCover = 'datas/cover/' . $settings['cover'];
+              } elseif (file_exists(__DIR__ . '/../../assets/img/' . $defaultCover)) {
+                $showCover = 'assets/img/' . $defaultCover;
+              }
+            ?>
+            <?php if ($showCover): ?>
+              <div style="margin-top:8px">
+                <img src="../../<?php echo e($showCover); ?>" alt="cover" style="max-height:120px; width:auto;" />
+              </div>
+            <?php endif; ?>
+          </div>
+        </div>
       </div>
 
-      <div class="mb-3">
-        <label class="form-label">ราคาโต๊ะ (ต่อโต๊ะ)</label>
-        <input type="number" name="table_money" class="form-control" value="<?php echo e($current_table_money); ?>" min="0" />
-        <div class="form-text">กำหนดราคาต่อโต๊ะ (หน่วย: บาท)</div>
+      <!-- E-Card & QR -->
+      <div class="card mb-3">
+        <div class="card-header"><strong>E-Card / QR</strong></div>
+        <div class="card-body">
+          <div class="mb-3">
+            <label class="form-label">QR ชำระเงิน (png/jpg/gif) - อัปโหลดเพื่อเปลี่ยน</label>
+            <input type="file" name="qr" class="form-control" accept="image/*" />
+            <?php
+              $showQR = '';
+              if (!empty($settings['qr']) && file_exists($qrDir . $settings['qr'])) {
+                $showQR = 'datas/payment/' . $settings['qr'];
+              }
+            ?>
+            <?php if ($showQR): ?>
+              <div style="margin-top:8px">
+                <img src="../../<?php echo e($showQR); ?>" alt="qr" style="max-height:120px; width:auto;" />
+              </div>
+            <?php endif; ?>
+          </div>
+
+          <div class="mb-3">
+            <label class="form-label">ภาพ Checklist / E-Card (png/jpg/gif) - อัปโหลดเพื่อเปลี่ยน</label>
+            <input type="file" name="checklist" class="form-control" accept="image/*" />
+            <?php
+              $showChecklist = '';
+              if (!empty($settings['checklist']) && file_exists($ecardDir . $settings['checklist'])) {
+                $showChecklist = 'datas/e-card/' . $settings['checklist'];
+              }
+            ?>
+            <?php if ($showChecklist): ?>
+              <div style="margin-top:8px">
+                <img src="../../<?php echo e($showChecklist); ?>" alt="checklist" style="max-height:120px; width:auto;" />
+              </div>
+            <?php endif; ?>
+          </div>
+        </div>
       </div>
 
-      <div class="mb-3">
-        <label class="form-label">จำนวนโต๊ะทั้งหมด</label>
-        <input type="number" name="all_tables" class="form-control" value="<?php echo e(!empty($settings['all_tables']) ? $settings['all_tables'] : $current_all_tables); ?>" min="1" />
-        <div class="form-text">กำหนดจำนวนโต๊ะทั้งหมดที่ระบบจะถือเป็นขีดจำกัด</div>
+      <!-- Pricing & Inventory -->
+      <div class="card mb-3">
+        <div class="card-header"><strong>Pricing & Inventory</strong></div>
+        <div class="card-body">
+          <div class="mb-3">
+            <label class="form-label">ราคาโต๊ะ (ต่อโต๊ะ)</label>
+            <input type="number" name="table_money" class="form-control" value="<?php echo e($current_table_money); ?>" min="0" />
+            <div class="form-text">กำหนดราคาต่อโต๊ะ (หน่วย: บาท)</div>
+          </div>
+
+          <div class="mb-3">
+            <label class="form-label">จำนวนโต๊ะทั้งหมด</label>
+            <input type="number" name="all_tables" class="form-control" value="<?php echo e(!empty($settings['all_tables']) ? $settings['all_tables'] : $current_all_tables); ?>" min="1" />
+            <div class="form-text">กำหนดจำนวนโต๊ะทั้งหมดที่ระบบจะถือเป็นขีดจำกัด</div>
+          </div>
+        </div>
       </div>
 
-      <h6 class="mt-3">โครงสร้างผังโต๊ะ</h6>
-      <div class="mb-3">
-        <label class="form-label">จำนวนแถว (rows)</label>
-        <input type="number" name="num_row" class="form-control" value="<?php echo e(!empty($settings['num_row']) ? $settings['num_row'] : $current_num_row); ?>" min="1" />
-      </div>
-      <div class="mb-3">
-        <label class="form-label">จำนวนคอลัมน์ต่อแถว (columns)</label>
-        <input type="number" name="num_call" class="form-control" value="<?php echo e(!empty($settings['num_call']) ? $settings['num_call'] : $current_num_call); ?>" min="1" />
+      <!-- Layout -->
+      <div class="card mb-3">
+        <div class="card-header"><strong>Layout</strong></div>
+        <div class="card-body">
+          <div class="mb-3">
+            <label class="form-label">จำนวนแถว (rows)</label>
+            <input type="number" name="num_row" class="form-control" value="<?php echo e(!empty($settings['num_row']) ? $settings['num_row'] : $current_num_row); ?>" min="1" />
+          </div>
+          <div class="mb-3">
+            <label class="form-label">จำนวนคอลัมน์ต่อแถว (columns)</label>
+            <input type="number" name="num_call" class="form-control" value="<?php echo e(!empty($settings['num_call']) ? $settings['num_call'] : $current_num_call); ?>" min="1" />
+          </div>
+        </div>
       </div>
 
-      <h6 class="mt-3">ข้อมูลการชำระเงิน</h6>
-      <div class="mb-3">
-        <label class="form-label">ชื่อธนาคาร</label>
-        <input type="text" name="bank_name" class="form-control" value="<?php echo e(!empty($settings['bank_name']) ? $settings['bank_name'] : 'ธนาคารไทยพาณิชย์'); ?>" />
+      <!-- Payment Info -->
+      <div class="card mb-3">
+        <div class="card-header"><strong>ข้อมูลการชำระเงิน</strong></div>
+        <div class="card-body">
+          <div class="mb-3">
+            <label class="form-label">ชื่อธนาคาร</label>
+            <input type="text" name="bank_name" class="form-control" value="<?php echo e(!empty($settings['bank_name']) ? $settings['bank_name'] : 'ธนาคารไทยพาณิชย์'); ?>" />
+          </div>
+          <div class="mb-3">
+            <label class="form-label">เลขบัญชี</label>
+            <input type="text" name="account_number" class="form-control" value="<?php echo e(!empty($settings['account_number']) ? $settings['account_number'] : '401-831327-1'); ?>" />
+          </div>
+          <div class="mb-3">
+            <label class="form-label">พร้อมเพย์</label>
+            <input type="text" name="promptpay" class="form-control" value="<?php echo e(!empty($settings['promptpay']) ? $settings['promptpay'] : '089-4961507'); ?>" />
+          </div>
+          <div class="mb-3">
+            <label class="form-label">ชื่อบัญชี</label>
+            <input type="text" name="account_holder" class="form-control" value="<?php echo e(!empty($settings['account_holder']) ? $settings['account_holder'] : 'นิศากร ห้องกระจก'); ?>" />
+          </div>
+        </div>
       </div>
-      <div class="mb-3">
+
+      <button class="btn btn-primary" type="submit">บันทึก</button>
+    </form>
         <label class="form-label">เลขบัญชี</label>
         <input type="text" name="account_number" class="form-control" value="<?php echo e(!empty($settings['account_number']) ? $settings['account_number'] : '401-831327-1'); ?>" />
       </div>

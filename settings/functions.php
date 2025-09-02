@@ -256,6 +256,13 @@ function selected($text1, $text2)
     }
 }
 
+// HTML-escape helper used in templates: e($str)
+function e($str)
+{
+    if (is_null($str)) return '';
+    return htmlspecialchars($str, ENT_QUOTES, 'UTF-8');
+}
+
 function status_reserve($id)
 {
     $sql_reserve = select("select * from reserve where id_table='$id' ");

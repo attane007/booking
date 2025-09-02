@@ -28,7 +28,12 @@ for ($i = 0; $i < count($sql_reserve); $i++) {
 
 
 <div class="card mb-4">
-    <div class="card-body">
+                            <div class="card-body">
+                                <?php
+                                // Use the same map heading from custom website settings
+                                $cw = function_exists('load_custom_website') ? load_custom_website() : [];
+                                $map_heading = !empty($cw['map_heading']) ? $cw['map_heading'] : 'ผังโต๊ะ งาน 48 ปี ราตรีม่วง-เหลือง';
+                                ?>
         <div class="row justify-content-center">
             <div class="col-12 col-lg-4">
                 <div id="photo" class="lg-p-5">
@@ -40,10 +45,19 @@ for ($i = 0; $i < count($sql_reserve); $i++) {
                     <div class="card mb-4 slip_box">
                         <div class="card-body">
                             <div class="row">
-                                <div class="col text-center">
-                                    <img src="assets/img/checklist.png" style="width: 70px;" alt="">
+                                    <div class="col text-center">
+                                    <?php
+                                    // prefer admin-uploaded checklist (datas/e-card/<file>) if configured
+                                    $cw = function_exists('load_custom_website') ? load_custom_website() : [];
+                                    $checkfile = '';
+                                    if (!empty($cw['checklist']) && file_exists(__DIR__ . '/../../datas/e-card/' . $cw['checklist'])) {
+                                        $checkfile = 'datas/e-card/' . $cw['checklist'];
+                                    }
+                                    $check_src = $checkfile ? $checkfile : 'assets/img/checklist.png';
+                                    ?>
+                                    <img src="<?php echo htmlspecialchars($check_src, ENT_QUOTES, 'UTF-8'); ?>" style="width: 70px;" alt="">
                                     <h2 class="fw-bold pb-0 mb-0">E-Card Online</h2>
-                                    <h4 class="fw-bold py-3 mb-0">งาน 48ปี ราตรีม่วง-เหลือง</h4>
+                                    <h4 class="fw-bold py-3 mb-0"><?php echo htmlspecialchars($map_heading, ENT_QUOTES, 'UTF-8'); ?></h4>
                                 </div>
                             </div>
                             <hr>
