@@ -25,12 +25,27 @@ if (!isset($_COOKIE['payment']) or count($sql_reserve) <= 0) { ?>
                     <div class="col-12 col-lg-4">
                         <div class="row mb-3">
                             <div class=" mb-3 text-center">
-                                <img class="" style="width: 80%;" src="assets/img/qr-code.png"><br>
+                                <?php
+                                // prefer QR set in custom website settings (datas/payment/<file>), fall back to assets image
+                                $cw = function_exists('load_custom_website') ? load_custom_website() : array();
+                                $qr_path = 'assets/img/qr-code.png';
+                                if (!empty($cw['qr']) && file_exists(__DIR__ . '/../../datas/payment/' . $cw['qr'])) {
+                                    $qr_path = 'datas/payment/' . $cw['qr'];
+                                }
+                                ?>
+                                <img class="" style="width: 80%;" src="<?php echo htmlspecialchars($qr_path, ENT_QUOTES, 'UTF-8'); ?>"><br>
                                 <b>โอนชำระเงินค่าโต๊ะ</b>
-                                <p>ธนาคารไทยพาณิชย์<br>
-                                    เลขบัญชี 401-831327-1<br>
-                                    พร้อมเพย์ : 089-4961507<br>
-                                    ชื่อบัญชี : นิศากร ห้องกระจก</p>
+                                <?php
+                                $cw = function_exists('load_custom_website') ? load_custom_website() : array();
+                                $bank_name = !empty($cw['bank_name']) ? $cw['bank_name'] : 'ธนาคารไทยพาณิชย์';
+                                $account_number = !empty($cw['account_number']) ? $cw['account_number'] : '401-831327-1';
+                                $promptpay = !empty($cw['promptpay']) ? $cw['promptpay'] : '089-4961507';
+                                $account_holder = !empty($cw['account_holder']) ? $cw['account_holder'] : 'นิศากร ห้องกระจก';
+                                ?>
+                                <p><?php echo htmlspecialchars($bank_name, ENT_QUOTES, 'UTF-8'); ?><br>
+                                    เลขบัญชี <?php echo htmlspecialchars($account_number, ENT_QUOTES, 'UTF-8'); ?><br>
+                                    พร้อมเพย์ : <?php echo htmlspecialchars($promptpay, ENT_QUOTES, 'UTF-8'); ?><br>
+                                    ชื่อบัญชี : <?php echo htmlspecialchars($account_holder, ENT_QUOTES, 'UTF-8'); ?></p>
                             </div>
                             <hr>
                             <div class="col-7  col-lg-mb-5">

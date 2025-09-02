@@ -19,10 +19,13 @@ $defaultCover = 'title.png';
 
 // new cover directory under booking/datas/cover
 $coverDir = __DIR__ . '/../../datas/cover/';
+// payment QR directory
+$qrDir = __DIR__ . '/../../datas/payment/';
 
 
 // Load existing settings
-$settings = array('site_title' => '', 'logo' => '', 'cover' => '', 'map_heading' => '');
+$settings = array('site_title' => '', 'logo' => '', 'cover' => '', 'map_heading' => '', 'qr' => '',
+  'bank_name' => '', 'account_number' => '', 'promptpay' => '', 'account_holder' => '');
 if (file_exists($settingsFile)) {
   $raw = file_get_contents($settingsFile);
   $decoded = json_decode($raw, true);
@@ -48,6 +51,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
   $site_title = isset($_POST['site_title']) ? $_POST['site_title'] : '';
   $map_heading = isset($_POST['map_heading']) ? $_POST['map_heading'] : '';
   $table_money = isset($_POST['table_money']) ? intval($_POST['table_money']) : $current_table_money;
+  $bank_name = isset($_POST['bank_name']) ? trim($_POST['bank_name']) : '';
+  $account_number = isset($_POST['account_number']) ? trim($_POST['account_number']) : '';
+  $promptpay = isset($_POST['promptpay']) ? trim($_POST['promptpay']) : '';
+  $account_holder = isset($_POST['account_holder']) ? trim($_POST['account_holder']) : '';
 
   // Save logo if uploaded (keeps legacy filename custom_logo.png)
   $savedLogo = '';
@@ -93,14 +100,41 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
   }
 
+    // Save payment QR if uploaded — store with timestamp and persist filename
+    $savedQR = '';
+    if (!empty($_FILES['qr']['tmp_name'])) {
+      $tmpq = $_FILES['qr']['tmp_name'];
+      $finfo = finfo_open(FILEINFO_MIME_TYPE);
+      $mimeq = finfo_file($finfo, $tmpq);
+      finfo_close($finfo);
+      $allowedQR = array('image/png','image/jpeg','image/gif');
+      if (in_array($mimeq, $allowedQR)) {
+        if (!is_dir($qrDir)) @mkdir($qrDir, 0755, true);
+        $extq = strpos($mimeq, 'png') !== false ? 'png' : (strpos($mimeq,'jpeg')!==false ? 'jpg' : 'gif');
+        $savedQR = 'qr_' . time() . '.' . $extq;
+        $destq = $qrDir . $savedQR;
+        if (!@move_uploaded_file($tmpq, $destq)) {
+          $msg = 'ไม่สามารถอัปโหลดรูป QR ได้';
+          $savedQR = '';
+        }
+      } else {
+        $msg = 'ไฟล์ QR ต้องเป็นภาพ (png/jpg/gif)';
+      }
+    }
+
   // persist settings to JSON
   // choose saved filenames if newly uploaded, else keep existing settings
   $payload = array(
     'site_title' => $site_title,
     'logo' => $savedLogo ? $savedLogo : (!empty($settings['logo']) ? $settings['logo'] : ''),
     'cover' => $savedCover ? $savedCover : (!empty($settings['cover']) ? $settings['cover'] : $defaultCover),
-    'map_heading' => $map_heading
-  , 'table_money' => $table_money
+    'qr' => $savedQR ? $savedQR : (!empty($settings['qr']) ? $settings['qr'] : ''),
+    'map_heading' => $map_heading,
+    'table_money' => $table_money,
+    'bank_name' => $bank_name,
+    'account_number' => $account_number,
+    'promptpay' => $promptpay,
+    'account_holder' => $account_holder
   );
   if (!is_dir(dirname($settingsFile))) @mkdir(dirname($settingsFile), 0755, true);
   if (file_put_contents($settingsFile, json_encode($payload, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE))) {
@@ -165,9 +199,43 @@ function e($s) { return htmlspecialchars($s, ENT_QUOTES, 'UTF-8'); }
       </div>
 
       <div class="mb-3">
+        <label class="form-label">QR ชำระเงิน (png/jpg/gif) - อัปโหลดเพื่อเปลี่ยน</label>
+        <input type="file" name="qr" class="form-control" accept="image/*" />
+        <?php
+          $showQR = '';
+          if (!empty($settings['qr']) && file_exists($qrDir . $settings['qr'])) {
+            $showQR = 'datas/payment/' . $settings['qr'];
+          }
+        ?>
+        <?php if ($showQR): ?>
+          <div style="margin-top:8px">
+            <img src="../../<?php echo e($showQR); ?>" alt="qr" style="max-height:120px; width:auto;" />
+          </div>
+        <?php endif; ?>
+      </div>
+
+      <div class="mb-3">
         <label class="form-label">ราคาโต๊ะ (ต่อโต๊ะ)</label>
         <input type="number" name="table_money" class="form-control" value="<?php echo e($current_table_money); ?>" min="0" />
         <div class="form-text">กำหนดราคาต่อโต๊ะ (หน่วย: บาท)</div>
+      </div>
+
+      <h6 class="mt-3">ข้อมูลการชำระเงิน</h6>
+      <div class="mb-3">
+        <label class="form-label">ชื่อธนาคาร</label>
+        <input type="text" name="bank_name" class="form-control" value="<?php echo e(!empty($settings['bank_name']) ? $settings['bank_name'] : 'ธนาคารไทยพาณิชย์'); ?>" />
+      </div>
+      <div class="mb-3">
+        <label class="form-label">เลขบัญชี</label>
+        <input type="text" name="account_number" class="form-control" value="<?php echo e(!empty($settings['account_number']) ? $settings['account_number'] : '401-831327-1'); ?>" />
+      </div>
+      <div class="mb-3">
+        <label class="form-label">พร้อมเพย์</label>
+        <input type="text" name="promptpay" class="form-control" value="<?php echo e(!empty($settings['promptpay']) ? $settings['promptpay'] : '089-4961507'); ?>" />
+      </div>
+      <div class="mb-3">
+        <label class="form-label">ชื่อบัญชี</label>
+        <input type="text" name="account_holder" class="form-control" value="<?php echo e(!empty($settings['account_holder']) ? $settings['account_holder'] : 'นิศากร ห้องกระจก'); ?>" />
       </div>
 
       <button class="btn btn-primary" type="submit">บันทึก</button>
