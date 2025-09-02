@@ -1,0 +1,386 @@
+/*---------- เพิ่มฟอนต์ Sarabun ----------*/
+@import url('https://fonts.googleapis.com/css2?family=Sarabun:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,300;1,400;1,500;1,600;1,700;1,800&display=swap');
+
+html,
+body {
+    font-family: Sarabun !important;
+    font-size: 14px;
+}
+
+#body_index {
+    background-image: url('../img/BG.png');
+    background-repeat: no-repeat;
+    background-size: 100%;
+    background-position: top center;
+}
+
+.img_title {
+    width: 80%;
+}
+
+#map {
+    background-color: #fbd8d6;
+    /*background: rgb(26, 19, 97);
+    background: radial-gradient(circle, rgba(26, 19, 97, 1) 0%, rgba(21, 16, 83, 1) 0%);
+    height: 100vh;*/
+}
+
+.seatmap table {
+    width: 100%;
+    text-align: center;
+    margin: 0 auto;
+}
+
+.icon-table {
+    width: 49px;
+    min-width: 16px;
+}
+
+.row-id {
+    height: 70px;
+}
+
+.explain button {
+    width: 26px;
+    height: 26px;
+    padding: 0;
+}
+
+#table_work button {
+    width: 60px;
+    height: 60px;
+    padding: 0px;
+}
+
+#table_work button:hover {
+    border-color: transparent;
+    color: #fff;
+}
+
+.box_login input[type="password"] {
+    height: 68px;
+    font-size: 50px;
+    padding: 0 1 10 0px;
+    text-align: center;
+}
+.spaspace {
+    width: 100px;
+    max-width: 100px;
+}
+/*.btn_table {
+    height: 60px;
+    width: 60px;
+    padding: 0px;
+    border-radius: 150px;
+}*/
+
+.btn_table span {
+    font-size: 14px;
+}
+
+button.status0 {
+    color: #fff;
+    background-color: #71dd37;
+    border-color: #71dd37;
+    box-shadow: 0 0.125rem 0.25rem 0 rgba(113, 221, 55, 0.4);
+}
+
+button.status1 {
+    color: #fff;
+    background-color: #8592a3;
+    border-color: #8592a3;
+    box-shadow: 0 0.125rem 0.25rem 0 rgba(133, 146, 163, 0.4);
+}
+
+button.status2 {
+    color: #fff;
+    background-color: #ffab00;
+    border-color: #ffab00;
+    box-shadow: 0 0.125rem 0.25rem 0 rgba(255, 171, 0, 0.4);
+}
+
+button.status3 {
+    color: #fff;
+    background-color: #696cff;
+    border-color: #696cff;
+    box-shadow: 0 0.125rem 0.25rem 0 rgba(105, 108, 255, 0.4);
+}
+
+button.status4 {
+    color: #fff;
+    background-color: #ff3e1d;
+    border-color: #ff3e1d;
+    box-shadow: 0 0.125rem 0.25rem 0 rgba(255, 62, 29, 0.4);
+}
+
+
+button.select {
+    background-color: unset;
+    border-color: unset;
+    box-shadow: unset;
+    background-image: url('../img/check.png');
+    background-size: 90%;
+    background-repeat: no-repeat;
+    background-position: center;
+}
+
+button.select span {
+    display: none;
+}
+
+.box_time {
+    font-size: 20px;
+}
+
+.box_pay .text1 {
+    margin-bottom: 10px;
+    text-align: center;
+    color: #222;
+}
+
+.box_pay .text2 {
+    text-align: center;
+    font-size: 20px;
+    font-weight: 700;
+    margin-bottom: 0px;
+    margin-top: -5px;
+}
+
+.box_pay2 .text2 {
+    /*text-align: left;*/
+    font-size: 20px;
+    font-weight: 700;
+    margin-bottom: 0px;
+    margin-top: -5px;
+}
+
+.box_pay .money {
+    font-size: 24px;
+    color: #0086d5;
+    background-color: #e0ffe87a;
+    padding: 10px 0;
+    border-radius: 10px;
+}
+
+.slip_box {
+    background-color: #f4f6f5;
+    background-image: url('../img/watermark.png');
+}
+
+img.qrcode {
+    width: 70%;
+    border-radius: 10px;
+    box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px;
+}
+
+.payment {
+    background-color: #dcf7fe;
+    padding: 10px;
+    border-radius: 10px;
+    border: 2px solid #9cc9dd;
+    font-size: 16px;
+    font-weight: 700;
+}
+
+@media (max-width: 576px) {
+    .img_title {
+        width: 100%;
+    }
+
+    #table_work button {
+        width: 26px;
+        height: 26px;
+        padding: 0;
+        font-size: 12px;
+    }
+
+
+
+
+
+    .explain button {
+        width: 26px;
+        height: 26px;
+        padding: 0;
+
+    }
+
+    .icon-table {
+        width: 23px;
+    }
+
+
+    .row-id {
+        height: 40px;
+    }
+
+    .box_pay {
+        background-color: #222;
+        color: #fff !important;
+        padding: 13px;
+        position: fixed;
+        bottom: 0px;
+    }
+
+
+
+    .box_pay div.card {
+        background-color: unset;
+        box-shadow: unset;
+        margin-bottom: 0 !important;
+    }
+
+    .box_pay div.card-body {
+        padding: 0;
+    }
+
+    .box_pay .text1 {
+        text-align: unset;
+        color: #fff;
+    }
+
+    .box_pay .text2 {
+        text-align: unset;
+    }
+
+    .box_pay .money,
+    .box_pay2 .money {
+        font-size: 24px;
+        color: #00a0ff;
+        background-color: unset;
+        padding: 0;
+        border-radius: 0;
+        text-align: right;
+    }
+
+    .box_pay label {
+        color: #fff;
+    }
+
+
+
+}
+
+
+
+
+
+.link_icon {
+    cursor: pointer;
+}
+
+.link_icon:hover {
+    box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;
+}
+
+.box_btn {
+    position: absolute;
+    right: 5px;
+    top: 7px;
+    background: #fff;
+    border-radius: 50px;
+    padding: 5px 15px;
+    /* color: #fff; */
+}
+
+.box_btn button.btn-icon {
+    width: 25px;
+    height: 25px;
+}
+
+.box_view {
+    background-color: #333;
+    border-radius: 60px;
+    width: fit-content;
+    padding: 5px 10px;
+    font-size: small;
+    color: #fff;
+    margin: -40px auto;
+    position: absolute;
+}
+
+/*-------------------------- แก้ไขไฟล์ต้นฉบับ --------------------------*/
+.bg-footer-theme {
+    background-color: unset;
+    color: #697a8d;
+}
+
+.bg-menu-theme {
+    background-color: #28243d !important;
+    color: #ffffff;
+}
+
+.bg-menu-theme .menu-inner-shadow {
+    background: linear-gradient(#28243d 41%, #28243d00 95%, rgba(255, 255, 255, 0));
+}
+
+.menu-vertical .menu-item .menu-link {
+    font-size: 14px;
+    letter-spacing: 0.15px;
+}
+
+.menu-vertical .menu-inner .menu-item.active>.menu-link {
+    font-weight: 400;
+}
+
+.bg-menu-theme .menu-link,
+.bg-menu-theme .menu-horizontal-prev,
+.bg-menu-theme .menu-horizontal-next {
+    color: #ffffff;
+}
+
+.bg-menu-theme .menu-link,
+.bg-menu-theme .menu-horizontal-prev,
+.bg-menu-theme .menu-horizontal-next:hover {
+    color: #ffffff !important;
+}
+
+.bg-menu-theme .menu-item>.menu-link:not(.menu-toggle):hover {
+    background-color: rgba(67, 89, 113, 0.5);
+}
+
+.menu-icon::before {
+    font-size: 20px;
+}
+
+.select2-container--default .select2-selection--multiple {
+    background-color: white;
+    border: 1px solid #d4d3d5;
+    border-radius: 0.375rem;
+    transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+    cursor: text;
+    padding-bottom: 5px;
+    padding-right: 5px;
+    position: relative;
+}
+
+.form-control {
+    display: block;
+    width: 100%;
+    padding: 0.5rem 0.875rem;
+    font-size: 0.9375rem;
+    font-weight: 400;
+    line-height: 1.47;
+    color: #544f5a;
+    appearance: none;
+    background-color: #fff;
+    background-clip: padding-box;
+    border: 1px solid #d4d3d5;
+    border-radius: 0.375rem;
+    transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+}
+
+div:where(.swal2-container) {
+    z-index: 9999 !important;
+}
+
+/*---------- m แทนโทรศัพท์มือถือ----------*/
+@media (max-width: 576px) {
+    .card-body {
+        padding: 6px;
+    }
+
+    .btn_table span {
+        font-size: 12px;
+    }
+}

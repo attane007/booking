@@ -1,0 +1,85 @@
+/* Admin styles inspired by booking UI */
+:root{
+  /* Vivid palette to match provided seatmap image */
+  --bg: #ffffff; /* page surface */
+  --card: #ffffff;
+  --muted: #4b5563;
+  --accent: #6b21a8; /* rich purple accent */
+  --shadow: 0 10px 28px rgba(8,24,48,0.08);
+  --radius: 12px;
+  --gap: 16px;
+  --maxw: 1200px;
+
+  /* seat colors */
+  --seat-available: #2ecc71; /* vivid green */
+  --seat-pending: #64748b; /* muted gray/blue */
+  --seat-reserved: #f59e0b; /* orange */
+  --seat-sold: #ff3b30; /* vivid red */
+  --seat-check: #6366f1; /* indigo/blue */
+}
+
+body.admin{
+  /* dark header band to match image then fade to white */
+  background: linear-gradient(180deg,#2b0b3a 0%, #f3e8ff 8%, var(--bg) 40%);
+  font-family: "Public Sans", system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+  color: #0f172a;
+  margin: 0;
+}
+
+/* container wrappers in existing template */
+.container-xxl {
+  max-width: var(--maxw) !important;
+  margin: 28px auto;
+  padding: 0 var(--gap);
+}
+
+/* cards like booking UI */
+.card {
+  background: var(--card);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  transition: none; /* no hover animation */
+  border: none;
+}
+/* no hover effect per user request */
+.card:hover{ box-shadow: var(--shadow); }
+.card .card-body{ padding: 18px; }
+
+.d-flex.align-items-center .p-3 h5.card-title{ margin: 0; }
+
+/* top overview numbers */
+.text-primary{ color: var(--accent) !important; }
+.h2{ font-size: 2rem; }
+
+/* seat map tweaks to match booking style */
+.table-seatmap button.btn{
+  border-radius: 10px;
+  padding: 8px 12px;
+  min-width: 52px;
+  height: 52px;
+  font-weight: 700;
+  border: none;
+  background: #f3f4f6;
+  color: #0f172a;
+  box-shadow: 0 6px 14px rgba(11,22,56,0.06);
+  transition: none;
+}
+
+/* status colors (matching existing classes) */
+.table-seatmap button.btn.status0{ background-color: var(--seat-available) !important; color: #ffffff !important; box-shadow: 0 6px 16px rgba(46,204,113,0.18) !important; }
+.table-seatmap button.btn.status1{ background-color: var(--seat-pending) !important; color: #ffffff !important; box-shadow: 0 6px 16px rgba(100,116,139,0.12) !important; }
+.table-seatmap button.btn.status2{ background-color: var(--seat-reserved) !important; color: #ffffff !important; box-shadow: 0 6px 16px rgba(245,158,11,0.16) !important; }
+.table-seatmap button.btn.status3{ background-color: var(--seat-check) !important; color: #ffffff !important; box-shadow: 0 6px 16px rgba(99,102,241,0.16) !important; }
+.table-seatmap button.btn.status4{ background-color: var(--seat-sold) !important; color: #ffffff !important; box-shadow: 0 6px 16px rgba(255,59,48,0.16) !important; }
+
+/* modal adjustments */
+.modal-content{ border-radius: 12px; overflow: hidden; }
+
+/* responsive grid for cards */
+.row > .col-lg-3{ margin-bottom: var(--gap); }
+
+/* small helpers */
+.explain .btn{ width: 36px; height: 36px; border-radius: 8px; }
+
+/* ensure images scale nicely */
+.card img{ max-width:100%; height:auto; display:block; }

@@ -1,0 +1,74 @@
+    /*---------- เพิ่มฟอนต์ Sarabun ----------*/
+    @import url('https://fonts.googleapis.com/css2?family=Sarabun:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,300;1,400;1,500;1,600;1,700;1,800&display=swap');
+
+    html,
+    body {
+        font-family: Sarabun !important;
+        margin: 0px;
+    }
+
+    /*----- Loaders -----*/
+
+    .preloader {
+        position: fixed;
+        top: 0;
+        height: 100%;
+        width: 100%;
+        z-index: 9999999;
+        transition: .9s;
+        background-color: #000000cc;
+        display: grid;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .loader {
+        width: 48px;
+        height: 48px;
+        display: block;
+        margin: 15px auto;
+        position: relative;
+        color: #FFF;
+        box-sizing: border-box;
+        animation: rotation 1s linear infinite;
+    }
+
+    .preloader span.text {
+        color: #FFF;
+    }
+
+    .loader::after,
+    .loader::before {
+        content: '';
+        box-sizing: border-box;
+        position: absolute;
+        width: 24px;
+        height: 24px;
+        top: 50%;
+        left: 50%;
+        transform: scale(0.5) translate(0, 0);
+        background-color: #ffb400;
+        border-radius: 50%;
+        animation: animloader 1s infinite ease-in-out;
+    }
+
+    .loader::before {
+        background-color: #ff0101;
+        transform: scale(0.5) translate(-48px, -48px);
+    }
+
+    @keyframes rotation {
+        0% {
+            transform: rotate(0deg);
+        }
+
+        100% {
+            transform: rotate(360deg);
+        }
+    }
+
+    @keyframes animloader {
+        50% {
+            transform: scale(1) translate(-50%, -50%);
+        }
+    }
