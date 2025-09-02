@@ -13,18 +13,24 @@
     name="viewport"
     content="width=device-width, initial-scale=1.0, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0" />
 
-  <title>ระบบจองโต๊ะงาน 69ปี คืนสู่เหย้า ชาวเหลืองแดง โรงเรียนบางระจันวิทยา</title>
+  <?php
+  // load custom site settings from JSON (site_title, logo)
+  $cw = load_custom_website();
+  $site_title = !empty($cw['site_title']) ? $cw['site_title'] : 'ระบบจองโต๊ะงาน 69ปี คืนสู่เหย้า ชาวเหลืองแดง โรงเรียนบางระจันวิทยา';
+  $site_logo = (!empty($cw['logo']) && file_exists(__DIR__ . '/../assets/img/' . $cw['logo'])) ? 'assets/img/' . $cw['logo'] : 'assets/img/profile.png';
+  ?>
+  <title><?php echo htmlspecialchars($site_title, ENT_QUOTES, 'UTF-8'); ?></title>
   <meta name="author" content="พัฒนาระบบโดย นายพงศธร แสงม่วง">
   <meta name="keywords" content="ระบบจองโต๊ะงาน 69ปี คืนสู่เหย้า ชาวเหลืองแดง โรงเรียนบางระจันวิทยา" />
   <meta name="description" content="ระบบจองโต๊ะงาน 69ปี คืนสู่เหย้า ชาวเหลืองแดง โรงเรียนบางระจันวิทยา" />
   <meta property="og:url" content="https://bw.psth20.com" />
   <meta property="og:type" content="article" />
-  <meta property="og:title" content="ระบบจองโต๊ะงาน 69ปี คืนสู่เหย้า ชาวเหลืองแดง โรงเรียนบางระจันวิทยา" />
-  <meta property="og:image" content="assets/img/profile.png" />
+  <meta property="og:title" content="<?php echo htmlspecialchars($site_title, ENT_QUOTES, 'UTF-8'); ?>" />
+  <meta property="og:image" content="<?php echo htmlspecialchars($site_logo, ENT_QUOTES, 'UTF-8'); ?>" />
   <meta property="fb:app_id" content="406977186010752" />
 
   <!-- Favicon -->
-  <link rel="icon" type="image/x-icon" href="assets/img/favicon.png" />
+  <link rel="icon" type="image/x-icon" href="<?php echo htmlspecialchars($site_logo, ENT_QUOTES, 'UTF-8'); ?>" />
 
   <!-- Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com" />
