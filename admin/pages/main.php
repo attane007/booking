@@ -184,7 +184,7 @@ $data_3 = $All_tables-($data_1+$data_2);
 
 
 <div class="modal fade" id="modalCenter" tabindex="-1" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
         <div class="modal-content">
             <div class="modal-header">
                 <h5 class="modal-title" id="modalCenterTitle">รายละเอียด โต๊ะ <span id="num_t"></span></h5>
