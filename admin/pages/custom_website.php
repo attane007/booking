@@ -29,10 +29,25 @@ if (file_exists($settingsFile)) {
   if (is_array($decoded)) $settings = array_merge($settings, $decoded);
 }
 
+// determine current table money: prefer JSON settings, else fallback to config.php value or 2500
+$current_table_money = 2500;
+if (!empty($settings['table_money']) && is_numeric($settings['table_money'])) {
+  $current_table_money = intval($settings['table_money']);
+} else {
+  $cfg_file = __DIR__ . '/../../settings/config.php';
+  if (file_exists($cfg_file)) {
+    $cfg = @file_get_contents($cfg_file);
+    if (preg_match('/\$table_money\s*=\s*([0-9]+)/', $cfg, $m)) {
+      $current_table_money = intval($m[1]);
+    }
+  }
+}
+
 // Handle POST save (only site_title and logo)
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
   $site_title = isset($_POST['site_title']) ? $_POST['site_title'] : '';
   $map_heading = isset($_POST['map_heading']) ? $_POST['map_heading'] : '';
+  $table_money = isset($_POST['table_money']) ? intval($_POST['table_money']) : $current_table_money;
 
   // Save logo if uploaded (keeps legacy filename custom_logo.png)
   $savedLogo = '';
@@ -85,6 +100,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     'logo' => $savedLogo ? $savedLogo : (!empty($settings['logo']) ? $settings['logo'] : ''),
     'cover' => $savedCover ? $savedCover : (!empty($settings['cover']) ? $settings['cover'] : $defaultCover),
     'map_heading' => $map_heading
+  , 'table_money' => $table_money
   );
   if (!is_dir(dirname($settingsFile))) @mkdir(dirname($settingsFile), 0755, true);
   if (file_put_contents($settingsFile, json_encode($payload, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE))) {
@@ -146,6 +162,12 @@ function e($s) { return htmlspecialchars($s, ENT_QUOTES, 'UTF-8'); }
             <img src="../../<?php echo e($showCover); ?>" alt="cover" style="max-height:120px; width:auto;" />
           </div>
         <?php endif; ?>
+      </div>
+
+      <div class="mb-3">
+        <label class="form-label">ราคาโต๊ะ (ต่อโต๊ะ)</label>
+        <input type="number" name="table_money" class="form-control" value="<?php echo e($current_table_money); ?>" min="0" />
+        <div class="form-text">กำหนดราคาต่อโต๊ะ (หน่วย: บาท)</div>
       </div>
 
       <button class="btn btn-primary" type="submit">บันทึก</button>

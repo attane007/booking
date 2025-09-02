@@ -180,10 +180,10 @@ $num_call = 11;
             {
                 $('[id=v_' + id + ']').remove();
                 $('[id=idt_' + id + ']').remove();
-                current -= 2800;
+                current -= <?= $table_money; ?>;
                 $('#total').html(current.toLocaleString() + " บาท");
             } else {
-                current += 2800;
+                current += <?= $table_money; ?>;
                 $('#total').html(current.toLocaleString() + " บาท");
                 $('#LargeInventory').append('<span id="v_' + id + '" class="badge bg-success mx-1 my-1">' + id + '</span>');
                 $('#input_id').append('<input type="hidden" name="id_table[]" id="idt_' + id + '" value="' + id + '-' + id2 + '"></input>');

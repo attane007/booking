@@ -39,7 +39,17 @@ $alphabet = array('', 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J','K','L','
 //,'R','S','T','U','V','W','X','Y','Z'
 $num_row = 17;
 $num_call = 12;
-$table_money = 2800; //ราคาโต๊ะ
+$table_money = 2500; //ราคาโต๊ะ (default)
+
+// If admin has set a table price in settings/custom_website.json, prefer that.
+$cw_file = __DIR__ . '/custom_website.json';
+if (file_exists($cw_file)) {
+	$cw_raw = @file_get_contents($cw_file);
+	$cw = @json_decode($cw_raw, true);
+	if (is_array($cw) && !empty($cw['table_money']) && is_numeric($cw['table_money'])) {
+		$table_money = intval($cw['table_money']);
+	}
+}
 $All_tables = 200;
 
 $status_table = array(
