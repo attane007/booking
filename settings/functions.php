@@ -289,3 +289,15 @@ function Overdue($date_end)
     $system_offon = $num_day1 >= 0  ? "1" : "0";
     return $system_offon;
 }
+
+// Load custom website settings saved by admin
+function load_custom_website()
+{
+    $settingsFile = __DIR__ . '/custom_website.json';
+    if (file_exists($settingsFile)) {
+        $raw = file_get_contents($settingsFile);
+        $data = json_decode($raw, true);
+        if (is_array($data)) return $data;
+    }
+    return array();
+}

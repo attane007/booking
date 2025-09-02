@@ -83,3 +83,29 @@ body.admin{
 
 /* ensure images scale nicely */
 .card img{ max-width:100%; height:auto; display:block; }
+
+/* Custom Website button styles */
+.btn-custom-website{
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 18px;
+  border-radius: 12px;
+  background: linear-gradient(90deg,var(--accent),#4f46e5);
+  color: #fff;
+  font-weight: 700;
+  box-shadow: 0 12px 30px rgba(79,70,229,0.18), inset 0 -2px 0 rgba(255,255,255,0.06);
+  border: none;
+  text-decoration: none;
+}
+.btn-custom-website:hover{
+  /* keep button visually consistent on hover — no lift */
+  box-shadow: 0 12px 30px rgba(79,70,229,0.18);
+  transform: none;
+}
+.btn-custom-website .icon{ width:20px; height:20px; display:inline-block; }
+
+/* make it prominent on small screens */
+@media (max-width: 768px){
+  .btn-custom-website{ width:100%; justify-content:center; padding:14px 20px; }
+}
