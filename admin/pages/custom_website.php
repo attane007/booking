@@ -25,7 +25,7 @@ $qrDir = __DIR__ . '/../../datas/payment/';
 
 // Load existing settings
 $settings = array('site_title' => '', 'logo' => '', 'cover' => '', 'map_heading' => '', 'qr' => '',
-  'bank_name' => '', 'account_number' => '', 'promptpay' => '', 'account_holder' => '');
+  'bank_name' => '', 'account_number' => '', 'promptpay' => '', 'account_holder' => '', 'all_tables' => 200);
 if (file_exists($settingsFile)) {
   $raw = file_get_contents($settingsFile);
   $decoded = json_decode($raw, true);
@@ -45,12 +45,49 @@ if (!empty($settings['table_money']) && is_numeric($settings['table_money'])) {
     }
   }
 }
+// determine current all_tables: prefer JSON settings, else read from config.php or default 200
+$current_all_tables = 200;
+if (!empty($settings['all_tables']) && is_numeric($settings['all_tables'])) {
+  $current_all_tables = intval($settings['all_tables']);
+} else {
+  $cfg_file = __DIR__ . '/../../settings/config.php';
+  if (file_exists($cfg_file)) {
+    $cfg = @file_get_contents($cfg_file);
+    if (preg_match('/\$All_tables\s*=\s*([0-9]+)/', $cfg, $m2)) {
+      $current_all_tables = intval($m2[1]);
+    }
+  }
+}
+// determine current table layout (rows/columns): prefer JSON settings, else config.php defaults
+$current_num_row = 17;
+$current_num_call = 12;
+if (!empty($settings['num_row']) && is_numeric($settings['num_row'])) {
+  $current_num_row = intval($settings['num_row']);
+}
+if (!empty($settings['num_call']) && is_numeric($settings['num_call'])) {
+  $current_num_call = intval($settings['num_call']);
+} else {
+  // try read from config.php as fallback
+  $cfg_file = __DIR__ . '/../../settings/config.php';
+  if (file_exists($cfg_file)) {
+    $cfg = @file_get_contents($cfg_file);
+    if (preg_match('/\$num_row\s*=\s*([0-9]+)/', $cfg, $m3)) {
+      $current_num_row = intval($m3[1]);
+    }
+    if (preg_match('/\$num_call\s*=\s*([0-9]+)/', $cfg, $m4)) {
+      $current_num_call = intval($m4[1]);
+    }
+  }
+}
 
 // Handle POST save (only site_title and logo)
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
   $site_title = isset($_POST['site_title']) ? $_POST['site_title'] : '';
   $map_heading = isset($_POST['map_heading']) ? $_POST['map_heading'] : '';
   $table_money = isset($_POST['table_money']) ? intval($_POST['table_money']) : $current_table_money;
+  $all_tables = isset($_POST['all_tables']) ? intval($_POST['all_tables']) : $current_all_tables;
+  $num_row = isset($_POST['num_row']) ? intval($_POST['num_row']) : $current_num_row;
+  $num_call = isset($_POST['num_call']) ? intval($_POST['num_call']) : $current_num_call;
   $bank_name = isset($_POST['bank_name']) ? trim($_POST['bank_name']) : '';
   $account_number = isset($_POST['account_number']) ? trim($_POST['account_number']) : '';
   $promptpay = isset($_POST['promptpay']) ? trim($_POST['promptpay']) : '';
@@ -130,7 +167,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     'cover' => $savedCover ? $savedCover : (!empty($settings['cover']) ? $settings['cover'] : $defaultCover),
     'qr' => $savedQR ? $savedQR : (!empty($settings['qr']) ? $settings['qr'] : ''),
     'map_heading' => $map_heading,
-    'table_money' => $table_money,
+  'table_money' => $table_money,
+  'all_tables' => $all_tables,
+  'num_row' => $num_row,
+  'num_call' => $num_call,
     'bank_name' => $bank_name,
     'account_number' => $account_number,
     'promptpay' => $promptpay,
@@ -218,6 +258,22 @@ function e($s) { return htmlspecialchars($s, ENT_QUOTES, 'UTF-8'); }
         <label class="form-label">ราคาโต๊ะ (ต่อโต๊ะ)</label>
         <input type="number" name="table_money" class="form-control" value="<?php echo e($current_table_money); ?>" min="0" />
         <div class="form-text">กำหนดราคาต่อโต๊ะ (หน่วย: บาท)</div>
+      </div>
+
+      <div class="mb-3">
+        <label class="form-label">จำนวนโต๊ะทั้งหมด</label>
+        <input type="number" name="all_tables" class="form-control" value="<?php echo e(!empty($settings['all_tables']) ? $settings['all_tables'] : $current_all_tables); ?>" min="1" />
+        <div class="form-text">กำหนดจำนวนโต๊ะทั้งหมดที่ระบบจะถือเป็นขีดจำกัด</div>
+      </div>
+
+      <h6 class="mt-3">โครงสร้างผังโต๊ะ</h6>
+      <div class="mb-3">
+        <label class="form-label">จำนวนแถว (rows)</label>
+        <input type="number" name="num_row" class="form-control" value="<?php echo e(!empty($settings['num_row']) ? $settings['num_row'] : $current_num_row); ?>" min="1" />
+      </div>
+      <div class="mb-3">
+        <label class="form-label">จำนวนคอลัมน์ต่อแถว (columns)</label>
+        <input type="number" name="num_call" class="form-control" value="<?php echo e(!empty($settings['num_call']) ? $settings['num_call'] : $current_num_call); ?>" min="1" />
       </div>
 
       <h6 class="mt-3">ข้อมูลการชำระเงิน</h6>

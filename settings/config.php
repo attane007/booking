@@ -40,17 +40,20 @@ $alphabet = array('', 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J','K','L','
 $num_row = 17;
 $num_call = 12;
 $table_money = 2500; //ราคาโต๊ะ (default)
+$All_tables = 200;
 
-// If admin has set a table price in settings/custom_website.json, prefer that.
+// Read overrides from settings/custom_website.json (single read)
 $cw_file = __DIR__ . '/custom_website.json';
 if (file_exists($cw_file)) {
 	$cw_raw = @file_get_contents($cw_file);
 	$cw = @json_decode($cw_raw, true);
-	if (is_array($cw) && !empty($cw['table_money']) && is_numeric($cw['table_money'])) {
-		$table_money = intval($cw['table_money']);
+	if (is_array($cw)) {
+		if (!empty($cw['table_money']) && is_numeric($cw['table_money'])) $table_money = intval($cw['table_money']);
+		if (!empty($cw['num_row']) && is_numeric($cw['num_row'])) $num_row = intval($cw['num_row']);
+		if (!empty($cw['num_call']) && is_numeric($cw['num_call'])) $num_call = intval($cw['num_call']);
+		if (!empty($cw['all_tables']) && is_numeric($cw['all_tables'])) $All_tables = intval($cw['all_tables']);
 	}
 }
-$All_tables = 200;
 
 $status_table = array(
 	'0' => "ว่าง",
