@@ -79,7 +79,12 @@ $data_3 = $All_tables-($data_1+$data_2);
         <div class="card mb-4">
             <div class="card-body">
                 <center>
-                <h3 class="mt-3 mb-5">ผังโต๊ะอาหาร "69ปี คืนสู่เหย้า ชาวเหลืองแดง"</h3>
+                <?php
+                    // Load custom website settings and use map_heading when present
+                    $cw = function_exists('load_custom_website') ? load_custom_website() : [];
+                    $map_heading = !empty($cw['map_heading']) ? $cw['map_heading'] : 'ผังโต๊ะอาหาร "69ปี คืนสู่เหย้า ชาวเหลืองแดง"';
+                ?>
+                <h3 class="mt-3 mb-5"><?php echo htmlspecialchars($map_heading, ENT_QUOTES, 'UTF-8'); ?></h3>
                 </center>
                 <div class="row mb-3 explain text-center">
                     <div class="col p-0"><button type="button" class="btn status0"></button> <br><?= $status_table[0]; ?> </div>

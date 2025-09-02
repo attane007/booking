@@ -24,7 +24,11 @@ for ($i = 0; $i < count($sql_delreserve); $i++) {
         <div class="card mb-4">
             <div class="card-body">
                 <center>
-                    <h3 class="mt-3 mb-5">ผังโต๊ะ งาน 48ปี ราตรีม่วง-เหลือง</h3>
+                    <?php
+                    $cw = load_custom_website();
+                    $map_heading = !empty($cw['map_heading']) ? $cw['map_heading'] : 'ผังโต๊ะ งาน 48 ปี ราตรีม่วง-เหลือง';
+                    ?>
+                    <h3 class="mt-3 mb-5"><?php echo htmlspecialchars($map_heading, ENT_QUOTES, 'UTF-8'); ?></h3>
                 </center>
                 <div class="row mb-3">
                     <div class="col text-center explain d-flex justify-content-center">

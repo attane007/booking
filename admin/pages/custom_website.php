@@ -12,9 +12,10 @@ if (!defined('IS_ADMIN') || IS_ADMIN !== true) {
 $msg = '';
 $settingsFile = __DIR__ . '/../../settings/custom_website.json';
 $logoPath = __DIR__ . '/../../assets/img/custom_logo.png';
+$coverPath = __DIR__ . '/../../assets/img/title.png';
 
 // Load existing settings
-$settings = array('site_title' => '', 'logo' => '');
+$settings = array('site_title' => '', 'logo' => '', 'cover' => '', 'map_heading' => '');
 if (file_exists($settingsFile)) {
   $raw = file_get_contents($settingsFile);
   $decoded = json_decode($raw, true);
@@ -24,6 +25,7 @@ if (file_exists($settingsFile)) {
 // Handle POST save (only site_title and logo)
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
   $site_title = isset($_POST['site_title']) ? $_POST['site_title'] : '';
+  $map_heading = isset($_POST['map_heading']) ? $_POST['map_heading'] : '';
 
   // Save logo if uploaded
   if (!empty($_FILES['logo']['tmp_name'])) {
@@ -42,10 +44,29 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
   }
 
+  // Save cover if uploaded (fixed filename title.png)
+  if (!empty($_FILES['cover']['tmp_name'])) {
+    $tmpc = $_FILES['cover']['tmp_name'];
+    $finfo = finfo_open(FILEINFO_MIME_TYPE);
+    $mimec = finfo_file($finfo, $tmpc);
+    finfo_close($finfo);
+    $allowedCover = array('image/png','image/jpeg','image/gif');
+    if (in_array($mimec, $allowedCover)) {
+      if (!is_dir(dirname($coverPath))) @mkdir(dirname($coverPath), 0755, true);
+      if (!@move_uploaded_file($tmpc, $coverPath)) {
+        $msg = 'ไม่สามารถอัปโหลดภาพปกได้';
+      }
+    } else {
+      $msg = 'ไฟล์ภาพปกต้องเป็นภาพ (png/jpg/gif)';
+    }
+  }
+
   // persist settings to JSON
   $payload = array(
     'site_title' => $site_title,
-    'logo' => file_exists($logoPath) ? basename($logoPath) : ''
+    'logo' => file_exists($logoPath) ? basename($logoPath) : '',
+    'cover' => file_exists($coverPath) ? basename($coverPath) : '',
+    'map_heading' => $map_heading
   );
   if (!is_dir(dirname($settingsFile))) @mkdir(dirname($settingsFile), 0755, true);
   if (file_put_contents($settingsFile, json_encode($payload, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE))) {
@@ -77,12 +98,34 @@ function e($s) { return htmlspecialchars($s, ENT_QUOTES, 'UTF-8'); }
       </div>
 
       <div class="mb-3">
+        <label class="form-label">ข้อความหัวผังโต๊ะ (Map heading)</label>
+        <input type="text" name="map_heading" class="form-control" value="<?php echo e(!empty($settings['map_heading']) ? $settings['map_heading'] : 'ผังโต๊ะ งาน 48ปี ราตรีม่วง-เหลือง'); ?>" />
+      </div>
+
+      <div class="mb-3">
         <label class="form-label">Logo (png/jpg/gif)</label>
         <input type="file" name="logo" class="form-control" accept="image/*" />
         <?php if (!empty($settings['logo']) && file_exists(__DIR__ . '/../../assets/img/' . $settings['logo'])): ?>
           <div style="margin-top:8px">
             <img src="../../assets/img/<?php echo e($settings['logo']); ?>" alt="logo" style="max-height:80px;" />
           </div>
+        <?php endif; ?>
+      </div>
+
+      <div class="mb-3">
+        <label class="form-label">ภาพปก (cover) - จะเก็บเป็น assets/img/title.png</label>
+        <input type="file" name="cover" class="form-control" accept="image/*" />
+        <?php if (!empty($settings['cover']) && file_exists(__DIR__ . '/../../assets/img/' . $settings['cover'])): ?>
+          <div style="margin-top:8px">
+            <img src="../../assets/img/<?php echo e($settings['cover']); ?>" alt="cover" style="max-height:120px; width:auto;" />
+          </div>
+        <?php else: ?>
+          <!-- show existing title.png if exists -->
+          <?php if (file_exists(__DIR__ . '/../../assets/img/title.png')): ?>
+            <div style="margin-top:8px">
+              <img src="../../assets/img/title.png" alt="cover" style="max-height:120px; width:auto;" />
+            </div>
+          <?php endif; ?>
         <?php endif; ?>
       </div>
 
