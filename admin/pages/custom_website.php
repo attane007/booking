@@ -161,10 +161,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
       }
     }
 
-      // Save e-card checklist image if uploaded — store with timestamp and persist filename
-      $savedChecklist = '';
-      if (!empty($_FILES['checklist']['tmp_name'])) {
-        $tmpch = $_FILES['checklist']['tmp_name'];
+      // Save banner/e-card image if uploaded — store with timestamp and persist filename
+      $savedBanner = '';
+      if (!empty($_FILES['banner']['tmp_name'])) {
+        $tmpch = $_FILES['banner']['tmp_name'];
         $finfo = finfo_open(FILEINFO_MIME_TYPE);
         $mimech = finfo_file($finfo, $tmpch);
         finfo_close($finfo);
@@ -172,14 +172,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         if (in_array($mimech, $allowedCh)) {
           if (!is_dir($ecardDir)) @mkdir($ecardDir, 0755, true);
           $extch = strpos($mimech, 'png') !== false ? 'png' : (strpos($mimech,'jpeg')!==false ? 'jpg' : 'gif');
-          $savedChecklist = 'checklist_' . time() . '.' . $extch;
-          $destch = $ecardDir . $savedChecklist;
+          $savedBanner = 'banner_' . time() . '.' . $extch;
+          $destch = $ecardDir . $savedBanner;
           if (!@move_uploaded_file($tmpch, $destch)) {
-            $msg = 'ไม่สามารถอัปโหลดรูป Checklist ได้';
-            $savedChecklist = '';
+            $msg = 'ไม่สามารถอัปโหลดรูป Banner ได้';
+            $savedBanner = '';
           }
         } else {
-          $msg = 'ไฟล์ Checklist ต้องเป็นภาพ (png/jpg/gif)';
+          $msg = 'ไฟล์ Banner ต้องเป็นภาพ (png/jpg/gif)';
         }
       }
 
@@ -190,7 +190,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     'logo' => $savedLogo ? $savedLogo : (!empty($settings['logo']) ? $settings['logo'] : ''),
     'cover' => $savedCover ? $savedCover : (!empty($settings['cover']) ? $settings['cover'] : $defaultCover),
     'qr' => $savedQR ? $savedQR : (!empty($settings['qr']) ? $settings['qr'] : ''),
-  'checklist' => $savedChecklist ? $savedChecklist : (!empty($settings['checklist']) ? $settings['checklist'] : ''),
+  // 'banner' key replaces the old 'checklist' name. Keep compatibility by preserving existing checklist if present.
+  'banner' => $savedBanner ? $savedBanner : (!empty($settings['banner']) ? $settings['banner'] : (!empty($settings['checklist']) ? $settings['checklist'] : '')),
     'map_heading' => $map_heading,
   'table_money' => $table_money,
   'all_tables' => $all_tables,
@@ -278,17 +279,20 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
           </div>
 
           <div class="mb-3">
-            <label class="form-label">ภาพ Checklist / E-Card (png/jpg/gif) - อัปโหลดเพื่อเปลี่ยน</label>
-            <input type="file" name="checklist" class="form-control" accept="image/*" />
+            <label class="form-label">Banner / E-Card image (png/jpg/gif) - อัปโหลดเพื่อเปลี่ยน</label>
+            <input type="file" name="banner" class="form-control" accept="image/*" />
             <?php
-              $showChecklist = '';
-              if (!empty($settings['checklist']) && file_exists($ecardDir . $settings['checklist'])) {
-                $showChecklist = 'datas/e-card/' . $settings['checklist'];
+              $showBanner = '';
+              // prefer new 'banner' key; fall back to old 'checklist' for compatibility
+              if (!empty($settings['banner']) && file_exists($ecardDir . $settings['banner'])) {
+                $showBanner = 'datas/e-card/' . $settings['banner'];
+              } elseif (!empty($settings['checklist']) && file_exists($ecardDir . $settings['checklist'])) {
+                $showBanner = 'datas/e-card/' . $settings['checklist'];
               }
             ?>
-            <?php if ($showChecklist): ?>
+            <?php if ($showBanner): ?>
               <div style="margin-top:8px">
-                <img src="../../<?php echo e($showChecklist); ?>" alt="checklist" style="max-height:120px; width:auto;" />
+                <img src="../../<?php echo e($showBanner); ?>" alt="banner" style="max-height:120px; width:auto;" />
               </div>
             <?php endif; ?>
           </div>

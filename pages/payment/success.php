@@ -39,7 +39,17 @@ for ($i = 0; $i < count($sql_reserve); $i++) {
                 <div id="photo" class="lg-p-5">
                     <div class="row">
                         <div class="col text-center">
-                            <img src="assets/img/banner.png" class="w-100" alt="">
+                            <?php
+                            // Banner: prefer admin-uploaded banner (datas/e-card/...), fall back to old checklist key for compatibility, otherwise default
+                            $cw = function_exists('load_custom_website') ? load_custom_website() : [];
+                            $banner_src = 'assets/img/banner.png';
+                            if (!empty($cw['banner']) && file_exists(__DIR__ . '/../../datas/e-card/' . $cw['banner'])) {
+                                $banner_src = 'datas/e-card/' . $cw['banner'];
+                            } elseif (!empty($cw['checklist']) && file_exists(__DIR__ . '/../../datas/e-card/' . $cw['checklist'])) {
+                                $banner_src = 'datas/e-card/' . $cw['checklist'];
+                            }
+                            ?>
+                            <img src="<?php echo htmlspecialchars($banner_src, ENT_QUOTES, 'UTF-8'); ?>" class="w-100" alt="">
                         </div>
                     </div>
                     <div class="card mb-4 slip_box">
@@ -47,13 +57,8 @@ for ($i = 0; $i < count($sql_reserve); $i++) {
                             <div class="row">
                                     <div class="col text-center">
                                     <?php
-                                    // prefer admin-uploaded checklist (datas/e-card/<file>) if configured
-                                    $cw = function_exists('load_custom_website') ? load_custom_website() : [];
-                                    $checkfile = '';
-                                    if (!empty($cw['checklist']) && file_exists(__DIR__ . '/../../datas/e-card/' . $cw['checklist'])) {
-                                        $checkfile = 'datas/e-card/' . $cw['checklist'];
-                                    }
-                                    $check_src = $checkfile ? $checkfile : 'assets/img/checklist.png';
+                                    // Checklist: use the original static image in assets/img/checklist.png
+                                    $check_src = 'assets/img/checklist.png';
                                     ?>
                                     <img src="<?php echo htmlspecialchars($check_src, ENT_QUOTES, 'UTF-8'); ?>" style="width: 70px;" alt="">
                                     <h2 class="fw-bold pb-0 mb-0">E-Card Online</h2>
