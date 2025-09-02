@@ -1,9 +1,0 @@
-RewriteEngine on
-
-RewriteRule ^([a-zA-Z0-9_-]+).html$ index.php?op=$1
-php_value date.timezone "Asia/Bangkok"
-
-
-
-
-
