@@ -85,9 +85,14 @@ if (!isset($_COOKIE['payment']) or count($sql_reserve) <= 0) { ?>
                                     <input type="tel" inputmode="numeric" pattern="\d+" class="form-control" name="tel" maxlength="10" required>
                                 </div>
                                 <div class="mb-3">
-                                    <label class="form-label">อีเมล</label>
-                                    <input type="email" class="form-control" name="email" required>
+                                    <label class="form-label">รุ่นที่</label>
+                                    <input type="text" class="form-control" name="generation" placeholder="เช่น รุ่น 1">
                                 </div>
+                                <div class="mb-3">
+                                    <label class="form-label">ปีเกิด</label>
+                                    <input type="number" class="form-control" name="birth_year" inputmode="numeric" min="1900" max="<?= date('Y'); ?>" placeholder="เช่น 1990">
+                                </div>
+                                <input type="hidden" name="email" value="">
                                 <div class="mb-3">
                                     <label class="form-label">แนบสลิป</label>
                                     <input class="form-control" type="file" name="file_slip" required>

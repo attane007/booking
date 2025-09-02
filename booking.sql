@@ -39,6 +39,8 @@ CREATE TABLE `reserve` (
   `date_buy` varchar(20) COLLATE utf8mb4_bin NOT NULL,
   `seller` varchar(100) COLLATE utf8mb4_bin NOT NULL,
   `payment` varchar(200) COLLATE utf8mb4_bin NOT NULL,
+  `generation` varchar(100) COLLATE utf8mb4_bin NOT NULL DEFAULT '',
+  `birth_year` int(4) NOT NULL DEFAULT 0,
   `cookie_` varchar(100) COLLATE utf8mb4_bin NOT NULL,
   `date_del` varchar(20) COLLATE utf8mb4_bin NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin;
@@ -47,17 +49,17 @@ CREATE TABLE `reserve` (
 -- Dumping data for table `reserve`
 --
 
-INSERT INTO `reserve` (`id_table`, `name_table`, `name`, `tel`, `email`, `status`, `status_pay`, `date_buy`, `seller`, `payment`, `cookie_`, `date_del`) VALUES
-('T_18', '18', 'VIP', 0000000000, '', 4, 1, '2025-01-09 17:18:55', 'ส่วนกลาง', '', '', ''),
-('T_19', '19', 'VIP', 0000000000, '', 4, 1, '2025-01-09 17:26:45', 'ส่วนกลาง', '', '', ''),
-('T_30', '30', 'VIP', 0000000000, '', 4, 1, '2025-01-09 17:19:09', 'ส่วนกลาง', '', '', ''),
-('T_31', '31', 'VIP', 0000000000, '', 4, 1, '2025-01-09 17:27:32', 'ส่วนกลาง', '', '', ''),
-('T_44', '44', 'sdf', 0000000000, 'sdf@gmail.com', 4, 1, '2025-01-13 16:35:22', 'ระบบออนไลน์', 'bGpkenhZekxnUHdLUklEMjNwd3BqZz09OjpjtauTYD7uLRfO3UJUbzZxOjo=', '', ''),
-('T_45', '45', 'sdf', 0000000000, 'sdf@gmail.com', 3, 1, '2025-01-13 16:35:22', 'ระบบออนไลน์', 'bGpkenhZekxnUHdLUklEMjNwd3BqZz09OjpjtauTYD7uLRfO3UJUbzZxOjo=', '', ''),
-('T_46', '46', 'sdf', 0000000000, 'sdf@gmail.com', 3, 1, '2025-01-13 16:35:22', 'ระบบออนไลน์', 'bGpkenhZekxnUHdLUklEMjNwd3BqZz09OjpjtauTYD7uLRfO3UJUbzZxOjo=', '', ''),
-('T_6', '6', 'VIP', 0000000000, '', 4, 1, '2025-01-09 17:05:24', 'ส่วนกลาง', '', '', ''),
-('T_7', '7', 'VIP', 0000000000, '', 4, 1, '2025-01-09 17:19:29', 'ส่วนกลาง', '', '', ''),
-('T_8', '8', 'คุณเจ', 0000000000, '', 2, 0, '2025-01-13 16:42:30', 'ส่วนกลาง', '', '', '');
+INSERT INTO `reserve` (`id_table`, `name_table`, `name`, `tel`, `email`, `status`, `status_pay`, `date_buy`, `seller`, `payment`, `generation`, `birth_year`, `cookie_`, `date_del`) VALUES
+('T_18', '18', 'VIP', 0000000000, '', 4, 1, '2025-01-09 17:18:55', 'ส่วนกลาง', '', '', 0, '', ''),
+('T_19', '19', 'VIP', 0000000000, '', 4, 1, '2025-01-09 17:26:45', 'ส่วนกลาง', '', '', 0, '', ''),
+('T_30', '30', 'VIP', 0000000000, '', 4, 1, '2025-01-09 17:19:09', 'ส่วนกลาง', '', '', 0, '', ''),
+('T_31', '31', 'VIP', 0000000000, '', 4, 1, '2025-01-09 17:27:32', 'ส่วนกลาง', '', '', 0, '', ''),
+('T_44', '44', 'sdf', 0000000000, 'sdf@gmail.com', 4, 1, '2025-01-13 16:35:22', 'ระบบออนไลน์', 'bGpkenhZekxnUHdLUklEMjNwd3BqZz09OjpjtauTYD7uLRfO3UJUbzZxOjo=', '', 0, '', ''),
+('T_45', '45', 'sdf', 0000000000, 'sdf@gmail.com', 3, 1, '2025-01-13 16:35:22', 'ระบบออนไลน์', 'bGpkenhZekxnUHdLUklEMjNwd3BqZz09OjpjtauTYD7uLRfO3UJUbzZxOjo=', '', 0, '', ''),
+('T_46', '46', 'sdf', 0000000000, 'sdf@gmail.com', 3, 1, '2025-01-13 16:35:22', 'ระบบออนไลน์', 'bGpkenhZekxnUHdLUklEMjNwd3BqZz09OjpjtauTYD7uLRfO3UJUbzZxOjo=', '', 0, '', ''),
+('T_6', '6', 'VIP', 0000000000, '', 4, 1, '2025-01-09 17:05:24', 'ส่วนกลาง', '', '', 0, '', ''),
+('T_7', '7', 'VIP', 0000000000, '', 4, 1, '2025-01-09 17:19:29', 'ส่วนกลาง', '', '', 0, '', ''),
+('T_8', '8', 'คุณเจ', 0000000000, '', 2, 0, '2025-01-13 16:42:30', 'ส่วนกลาง', '', '', 0, '', '');
 
 --
 -- Indexes for dumped tables
