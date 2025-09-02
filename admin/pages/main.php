@@ -133,13 +133,15 @@ $data_3 = $All_tables-($data_1+$data_2);
                                             //เลขโต๊ะ
                                             $t_number = $i2 + ($i * $num_call) - $num_call;
 
-                                            if($alphabet[$r]=='Q'){
-                                                $t_number = $t_number -2;
-                                                if($t_number>=191 && $t_number<=192 OR $t_number>200 ){
-                                                    $css_h = "d-none";
-                                                }else{
-                                                    $css_h = "";
-                                                }
+                                            // adjust numbering for row Q (legacy layout) then hide any table beyond configured limit
+                                            if ($alphabet[$r] == 'Q') {
+                                                $t_number = $t_number - 2;
+                                            }
+                                            // hide tables that are outside the configured total ($All_tables)
+                                            if (!empty($All_tables) && is_numeric($All_tables) && $t_number > intval($All_tables)) {
+                                                $css_h = "d-none";
+                                            } else {
+                                                $css_h = "";
                                             }
                                             $id_table = "T_" . $t_number;
                                             $sql_reserve = select("select * from reserve where id_table='$id_table' ");
