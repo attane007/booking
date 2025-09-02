@@ -353,19 +353,4 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
       <button class="btn btn-primary" type="submit">บันทึก</button>
     </form>
-        <label class="form-label">เลขบัญชี</label>
-        <input type="text" name="account_number" class="form-control" value="<?php echo e(!empty($settings['account_number']) ? $settings['account_number'] : '401-831327-1'); ?>" />
-      </div>
-      <div class="mb-3">
-        <label class="form-label">พร้อมเพย์</label>
-        <input type="text" name="promptpay" class="form-control" value="<?php echo e(!empty($settings['promptpay']) ? $settings['promptpay'] : '089-4961507'); ?>" />
-      </div>
-      <div class="mb-3">
-        <label class="form-label">ชื่อบัญชี</label>
-        <input type="text" name="account_holder" class="form-control" value="<?php echo e(!empty($settings['account_holder']) ? $settings['account_holder'] : 'นิศากร ห้องกระจก'); ?>" />
-      </div>
-
-      <button class="btn btn-primary" type="submit">บันทึก</button>
-    </form>
-  </div>
-</div>
+    
